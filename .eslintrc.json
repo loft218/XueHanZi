@@ -1,0 +1,33 @@
+{
+  "extends": ["taro/react"],
+  "plugins": ["import"],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": "./tsconfig.json"
+      }
+    }
+  },
+  "ignorePatterns": ["dist/**", "__tests__/**"],
+  "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
+    "jsx-quotes": ["error", "prefer-double"],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          ["builtin", "external"], // 内建模块和外部依赖
+          ["internal"], // 项目内的绝对路径模块（如 `@/common`）
+          ["parent", "sibling", "index"] // 相对路径模块
+        ],
+        "newlines-between": "always",
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        }
+      }
+    ]
+  }
+}
