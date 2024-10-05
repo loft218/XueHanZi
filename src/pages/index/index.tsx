@@ -1,5 +1,7 @@
-import { View, Text } from "@tarojs/components";
+import { View } from "@tarojs/components";
 import { useLoad } from "@tarojs/taro";
+
+import VoiceRecorder from "@/components/VoiceRecorder";
 
 import "./index.scss";
 
@@ -10,7 +12,7 @@ export default function Index() {
 
   return (
     <View className="index">
-      <Text className="text-2xl font-bold">Hello world!</Text>
+      <VoiceRecorder />
     </View>
   );
 }
