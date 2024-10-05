@@ -31,3 +31,15 @@ npm install eslint-import-resolver-typescript --save-dev
 ```
 
 3. 参见本项目的 `eslintrc.json`
+
+### 其它配置
+
+1. 修改 `config/index.ts` Webpack5 持久化缓存配置
+
+```
+const baseConfig: UserConfigExport = {
+  cache: {
+    enable: true
+  }
+}
+```

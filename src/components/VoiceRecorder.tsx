@@ -66,7 +66,7 @@ const VoiceRecorder: React.FC = () => {
     <View className="container">
       <RecordingButton onStart={startRecording} onStop={stopRecording} />
       <RecognitionResult result={result} />
-      <View>录音时长: {duration / 1000}秒</View> {/* 显示录音时长 */}
+      <View>录音时长: {duration / 1000}秒</View>
     </View>
   );
 };
