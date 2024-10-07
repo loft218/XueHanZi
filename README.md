@@ -25,7 +25,7 @@ taro init [AppName]
 1. 修改`.eslintrc` 为 `.eslintrc.json`
 2. 安装 `eslint-plugin-import` 和 `eslint-import-resolver-typescript`
 
-```
+```sh
 npm install eslint-plugin-import --save-dev
 npm install eslint-import-resolver-typescript --save-dev
 ```
@@ -36,10 +36,18 @@ npm install eslint-import-resolver-typescript --save-dev
 
 1. 修改 `config/index.ts` Webpack5 持久化缓存配置
 
-```
+```ts
 const baseConfig: UserConfigExport = {
   cache: {
-    enable: true
-  }
-}
+    enable: true,
+  },
+};
+```
+
+2. `app.config.ts` 增加 lazyCodeLoading
+
+```ts
+export default defineAppConfig({
+  lazyCodeLoading: "requiredComponents",
+});
 ```

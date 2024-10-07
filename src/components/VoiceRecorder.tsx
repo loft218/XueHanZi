@@ -3,6 +3,7 @@ import Taro from "@tarojs/taro";
 import { useState } from "react";
 
 import { callBaiduSpeechRecognition } from "@/api/baidu";
+import { convertToPinyin } from "@/api/pinyin";
 import {
   AudioChannel,
   AudioEncodeBitRate,
@@ -15,6 +16,7 @@ import RecordingButton from "./RecordingButton";
 
 const VoiceRecorder: React.FC = () => {
   const [result, setResult] = useState<string>("");
+  const [pinyinResult, setPinyinResult] = useState<string>("");
   const [duration, setDuration] = useState<number>(0); // 添加时长状态
   const recorderManager = Taro.getRecorderManager();
 
@@ -57,8 +59,10 @@ const VoiceRecorder: React.FC = () => {
         base64Audio as string,
         fileSize
       );
-
       setResult(recognitionResult);
+
+      const pinyin = await convertToPinyin(recognitionResult);
+      setPinyinResult(pinyin);
     });
   };
 
@@ -66,6 +70,10 @@ const VoiceRecorder: React.FC = () => {
     <View className="container">
       <RecordingButton onStart={startRecording} onStop={stopRecording} />
       <RecognitionResult result={result} />
+      <View>
+        拼音结果：
+        {pinyinResult}
+      </View>
       <View>录音时长: {duration / 1000}秒</View>
     </View>
   );
