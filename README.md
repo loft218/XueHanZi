@@ -16,7 +16,25 @@ taro init [AppName]
 
 ### 使用 Tailwind
 
-项目地址：https://github.com/dcasia/mini-program-tailwind
+```sh
+npm i tailwindcss
+```
+
+```
+//tailwind.config.ts
+
+import type { Config } from "tailwindcss";
+
+const config: Config = {
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  theme: {
+    extend: {},
+  },
+};
+export default config;
+```
+
+配置参考项目：https://github.com/dcasia/mini-program-tailwind
 
 ### 配置 eslint
 
@@ -50,4 +68,10 @@ const baseConfig: UserConfigExport = {
 export default defineAppConfig({
   lazyCodeLoading: "requiredComponents",
 });
+```
+
+3. `.gitattributes` 配置，解决不同的换行符格式
+
+```
+* text=auto
 ```
