@@ -1,0 +1,40 @@
+@import "../../global.scss";
+
+button {
+  all: unset;
+  margin: 0;
+  padding: 0;
+  background-color: inherit;
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+button:after {
+  content: none;
+}
+
+button::after {
+  border: none;
+}
+
+.btn-default {
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  padding: 0.8rem 1.6rem;
+  font-weight: 400;
+  border: solid 1px #e0e0e0;
+  background: "#000";
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: $primary-color;
+  border:solid 1px $primary-color;
+}
+
+.btn-hover {
+  opacity: 0.8;
+}

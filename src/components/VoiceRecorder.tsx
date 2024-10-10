@@ -67,14 +67,14 @@ const VoiceRecorder: React.FC = () => {
   };
 
   return (
-    <View className="container">
-      <RecordingButton onStart={startRecording} onStop={stopRecording} />
+    <View>
       <RecognitionResult result={result} />
       <View>
         拼音结果：
         {pinyinResult}
       </View>
       <View>录音时长: {duration / 1000}秒</View>
+      <RecordingButton onStart={startRecording} onStop={stopRecording} />
     </View>
   );
 };

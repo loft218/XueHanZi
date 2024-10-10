@@ -1,18 +1,16 @@
 import { View } from "@tarojs/components";
-import { useLoad } from "@tarojs/taro";
+import Taro from "@tarojs/taro";
 
-import VoiceRecorder from "@/components/VoiceRecorder";
-
-import "./index.scss";
+import XButton from "@/components/XButton";
 
 export default function Index() {
-  useLoad(() => {
-    console.log("Page loaded.");
-  });
-
   return (
-    <View className="index">
-      <VoiceRecorder />
+    <View className="scroll-area">
+      <View className="container justify-center ">
+        <XButton onClick={() => Taro.navigateTo({ url: "/pages/hanzi/xue" })}>
+          开始学汉字
+        </XButton>
+      </View>
     </View>
   );
 }

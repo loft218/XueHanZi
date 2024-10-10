@@ -2,7 +2,7 @@
   "miniprogramRoot": "./dist",
   "projectname": "XueHanZi",
   "description": "学汉字",
-  "appid": "touristappid",
+  "appid": "wx045105f9206ce5d9",
   "setting": {
     "urlCheck": true,
     "es6": false,
