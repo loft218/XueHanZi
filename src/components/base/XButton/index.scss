@@ -1,4 +1,4 @@
-@import "../../global.scss";
+@import "../base.scss";
 
 button {
   all: unset;
@@ -32,7 +32,7 @@ button::after {
 .btn-primary {
   color: #fff;
   background-color: $primary-color;
-  border:solid 1px $primary-color;
+  border: solid 1px $primary-color;
 }
 
 .btn-hover {

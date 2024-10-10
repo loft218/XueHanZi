@@ -1,7 +1,7 @@
 import { View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 
-import XButton from "@/components/XButton";
+import { XButton } from "@/components/base";
 
 export default function Index() {
   return (

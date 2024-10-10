@@ -1,4 +1,4 @@
-import { View, Text } from "@tarojs/components";
+import { Text } from "@tarojs/components";
 
 // import gridBg from "@/assets/grid-bg.png";
 

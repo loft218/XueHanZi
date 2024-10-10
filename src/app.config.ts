@@ -1,6 +1,6 @@
 export default defineAppConfig({
-  pages: ["pages/index/index", "pages/hanzi/xue"],
-  entryPagePath: "pages/index/index",
+  pages: ["pages/index/index", "pages/hanzi/xue", "pages/hanzi/nian"],
+  entryPagePath: "pages/hanzi/xue",
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",

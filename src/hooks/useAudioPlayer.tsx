@@ -1,5 +1,5 @@
 import { createInnerAudioContext, InnerAudioContext } from "@tarojs/taro";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { AudioStatus } from "@/types/AudioPlayer";
 
@@ -16,37 +16,83 @@ const useAudioPlayer = (): Player => {
   const [current, setCurrent] = useState<InnerAudioContext>();
   const [status, setStatus] = useState<AudioStatus>("idle");
 
-  const createAudioContext = (src: string) => {
+  // 创建 InnerAudioContext 实例
+  useEffect(() => {
     const ctx = createInnerAudioContext();
-    ctx.src = src;
     setCurrent(ctx);
-    return ctx;
-  };
+
+    return () => {
+      if (ctx) {
+        ctx.destroy(); // 清理音频实例
+      }
+    };
+  }, []);
+
+  // 处理所有音频事件
+  const handleAudioEvents = useCallback((ctx: InnerAudioContext) => {
+    ctx.onPlay(() => setStatus("playing"));
+    ctx.onPause(() => setStatus("paused"));
+    ctx.onEnded(() => setStatus("finished"));
+    ctx.onStop(() => setStatus("stopped"));
+    ctx.onError((err) => {
+      console.error("Audio Error: ", err);
+      setStatus("error");
+    });
+    ctx.onCanplay(() => {
+      setStatus("ready");
+      ctx.play();
+    });
+    ctx.onWaiting(() => {
+      setStatus("loading");
+    });
+  }, []);
 
   const play = (src: string) => {
-    const ctx = createAudioContext(src);
-    ctx.onEnded(() => setStatus("finished"));
-    ctx.onError(() => setStatus("error"));
-    ctx.play();
-    setStatus("playing");
+    if (!current) {
+      console.error("Audio context is not initialized.");
+      return;
+    }
+
+    // 避免重复播放
+    if (status === "playing" && current.src === src) {
+      return;
+    }
+
+    current.src = src; // 更新 src
+    setStatus("loading");
+
+    // 绑定事件
+    handleAudioEvents(current);
+
+    // 调用 play 会触发 onCanplay 后正式播放
+    current.play();
   };
 
   const pause = () => {
-    if (current && status !== "finished") {
+    if (current && status === "playing") {
       current.pause();
-      setStatus("paused");
     }
   };
 
   const stop = () => {
     if (current) {
       current.stop();
-      setStatus("stopped");
     }
   };
 
   const destroy = () => {
-    if (current) current.destroy();
+    if (current) {
+      // 清除所有监听器以防止内存泄漏
+      current.offPlay();
+      current.offPause();
+      current.offEnded();
+      current.offStop();
+      current.offError();
+      current.offCanplay();
+      current.offWaiting();
+      current.destroy();
+      setStatus("idle");
+    }
   };
 
   return { current, status, play, pause, stop, destroy };
