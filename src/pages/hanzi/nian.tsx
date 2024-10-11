@@ -5,11 +5,18 @@ import { useEffect, useState } from "react";
 import { callBaiduSpeechRecognition } from "@/api/baidu";
 import { convertToPinyin } from "@/api/pinyin";
 import { Section } from "@/components/base";
+import CardStack from "@/components/Card/CardStack";
 import VoiceRecorder from "@/components/VoiceRecorder";
-import WordCard from "@/components/WordCard";
 import { isDevTools } from "@/utils/taro";
 
 import words from "../../data/lesson1.json";
+
+const cards = [
+  { frontText: "我", backColor: "#FF6347" },
+  { frontText: "爱", backColor: "#4682B4" },
+  { frontText: "学", backColor: "#32CD32" },
+  { frontText: "习", backColor: "#FFD700" },
+];
 
 export default function HanZiNianPage() {
   const [recognizedText, setRecognizedText] = useState("");
@@ -63,16 +70,7 @@ export default function HanZiNianPage() {
       <View className="container justify-center">
         <View className="text-3xl font-bold">念一念</View>
 
-        <Swiper indicatorDots className="w-full flex-1">
-          {words.map((word, index) => (
-            <SwiperItem
-              key={index}
-              className="w-full flex justify-center items-center"
-            >
-              <WordCard word={word.hanzi} size="10rem" padding="2rem" />
-            </SwiperItem>
-          ))}
-        </Swiper>
+        <CardStack cards={words} />
 
         <Section>
           <View>{recognizedText || "等待录音结果..."}</View>
