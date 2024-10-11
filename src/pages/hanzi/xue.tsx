@@ -32,8 +32,8 @@ export default function HanZiXuePage() {
                 }}
                 className={
                   currentWord === word.hanzi
-                    ? "bg-primary text-white"
-                    : "text-neutral-400"
+                    ? "text-primary animate__animated animate__heartBeat"
+                    : "text-neutral-800"
                 }
                 key="_index"
                 word={word.hanzi}

@@ -50,6 +50,32 @@ npm install eslint-import-resolver-typescript --save-dev
 
 3. 参见本项目的 `eslintrc.json`
 
+### 使用 animate.scss
+
+1. 下载 `animate.css`，地址：https://github.com/animate-css/animate.css/releases/
+
+2. 由于小程序对代码大小限制比较大，所以删除了 `animate.css` 中 所有`@-webkit-` 部分 css，减少了一半体积
+
+```
+@-webkit.*(\n*[^@]*)\}
+```
+
+3. 修改 `animate.css` 第一行的 `:root{}` 改成 `page{}` ，小程序里面没用 `:root`
+
+```
+:root{--animate-duration:1s;--animate-delay:1s;--animate-repeat:1}
+// 改为
+page{--animate-duration:1s;--animate-delay:1s;--animate-repeat:1}
+```
+
+4. 重命名为 `animate.scss`
+
+5. 在 `app.scss` 引入
+
+```
+@import "./animate.scss";
+```
+
 ### 其它配置
 
 1. 修改 `config/index.ts` Webpack5 持久化缓存配置
