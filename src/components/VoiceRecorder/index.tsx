@@ -13,13 +13,16 @@ import "./index.scss";
 
 interface Props {
   onComplete?: (tempFilePath: string) => void; // 可选的 onComplete 回调
+  disabled?: boolean; // 控制录音按钮是否可点击
 }
 
-const VoiceRecorder: React.FC<Props> = ({ onComplete }) => {
+const VoiceRecorder: React.FC<Props> = ({ onComplete, disabled = false }) => {
   const [isRecording, setIsRecording] = useState(false);
   const recorderManager = Taro.getRecorderManager();
 
   const startRecording = () => {
+    if (disabled || isRecording) return; // 如果禁用或正在录音，则不执行
+
     setIsRecording(true);
 
     recorderManager.start({
@@ -35,10 +38,13 @@ const VoiceRecorder: React.FC<Props> = ({ onComplete }) => {
 
     recorderManager.onError((err) => {
       console.error("录音出错: ", err);
+      setIsRecording(false); // 如果出错，重置录音状态
     });
   };
 
   const stopRecording = async () => {
+    if (disabled || !isRecording) return; // 如果禁用或未开始录音，则不执行
+
     recorderManager.stop();
     setIsRecording(false);
 
@@ -66,7 +72,7 @@ const VoiceRecorder: React.FC<Props> = ({ onComplete }) => {
         </>
       )}
       <View
-        className="record-btn"
+        className={`record-btn ${disabled ? "disabled" : ""}`} // 视情况添加禁用样式
         onTouchStart={startRecording}
         onTouchEnd={stopRecording}
       >

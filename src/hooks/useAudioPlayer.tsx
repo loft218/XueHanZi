@@ -32,7 +32,10 @@ const useAudioPlayer = (): Player => {
   const handleAudioEvents = useCallback((ctx: InnerAudioContext) => {
     ctx.onPlay(() => setStatus("playing"));
     ctx.onPause(() => setStatus("paused"));
-    ctx.onEnded(() => setStatus("finished"));
+    ctx.onEnded(() => {
+      setStatus("finished");
+      ctx.stop(); // 在音频结束时停止
+    });
     ctx.onStop(() => setStatus("stopped"));
     ctx.onError((err) => {
       console.error("Audio Error: ", err);
@@ -40,7 +43,8 @@ const useAudioPlayer = (): Player => {
     });
     ctx.onCanplay(() => {
       setStatus("ready");
-      ctx.play();
+      // 移除自动调用 play()
+      // ctx.play();
     });
     ctx.onWaiting(() => {
       setStatus("loading");

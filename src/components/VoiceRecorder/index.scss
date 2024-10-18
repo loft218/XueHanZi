@@ -29,6 +29,11 @@ $button-size: 200px; // 按钮的基础大小，可根据需要调整
   font-size: calc($button-size / 6); // 文本大小相对于按钮大小
 }
 
+.record-btn.disabled {
+  background-color: #ccc; // 按钮背景变灰
+  pointer-events: none; // 禁止点击
+}
+
 .circle-wrapper {
   position: absolute;
   top: 50%;

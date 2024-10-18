@@ -18,6 +18,10 @@ export default function HanZiXuePage() {
     player.destroy();
   });
 
+  function navigateToNext() {
+    Taro.navigateTo({ url: "/pages/hanzi/ren" });
+  }
+
   return (
     <View className="scroll-area">
       <View className="container justify-center">
@@ -45,10 +49,7 @@ export default function HanZiXuePage() {
         </Section>
 
         <View>{player.status}</View>
-        <XButton
-          onClick={() => Taro.navigateTo({ url: "/pages/hanzi/nian" })}
-          className="btn-primary"
-        >
+        <XButton onClick={navigateToNext} className="btn-primary">
           下一步
         </XButton>
       </View>
