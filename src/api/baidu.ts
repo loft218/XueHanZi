@@ -101,3 +101,41 @@ export const callBaiduSpeechRecognition = async (
     return "请求失败";
   }
 };
+
+// 获取百度 API 合成的音频数据
+export const getSpeechAudio = async (
+  text: string
+): Promise<ArrayBuffer | null> => {
+  const url = `https://tsn.baidu.com/text2audio`;
+  const token = await getCachedAccessToken(); // 获取缓存的 token
+
+  const params = {
+    tex: text,
+    tok: token,
+    cuid: "dev",
+    ctp: 1,
+    lan: "zh",
+    spd: 5,
+    pit: 5,
+    vol: 5,
+    per: 103, // 发音人
+    aue: 3, // 音频格式
+  };
+
+  try {
+    const response = await Taro.request({
+      url,
+      method: "POST",
+      data: params,
+      header: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      responseType: "arraybuffer", // 返回音频数据流
+    });
+
+    return response.data as ArrayBuffer;
+  } catch (error) {
+    console.error("Error during speech synthesis request:", error);
+    return null;
+  }
+};

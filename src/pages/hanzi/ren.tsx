@@ -1,10 +1,11 @@
 import { View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Section, XButton } from "@/components/base";
 import CardFlip from "@/components/Card/CardFlip";
 import useAudioPlayer from "@/hooks/useAudioPlayer";
+import { IHanZi } from "@/types/Word";
 
 import words from "../../data/lesson1.json";
 
@@ -12,96 +13,80 @@ export default function HanZiRenPage() {
   const [flippedStates, setFlippedStates] = useState<boolean[]>(
     Array.from({ length: words.length }, () => false)
   );
-  const [shakeIndices, setShakeIndices] = useState<number[]>([]); // 存储需要抖动的卡片索引
-
-  const [playerReady, setPlayerReady] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [shakeIndices, setShakeIndices] = useState<number[]>([]);
+  const [currentWord, setCurrentWord] = useState<IHanZi | null>(null);
+  const [isStarted, setIsStarted] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [playing, setPlaying] = useState(false);
 
   const player = useAudioPlayer();
 
-  // 播放指定索引的音频
-  const playAudioAtIndex = (index: number) => {
-    if (player.current && player.status !== "playing") {
-      // 只有在未播放时才播放
-      player.play(words[index].duyin); // 播放对应音频
+  // 开始游戏
+  const startGame = () => {
+    setIsStarted(true);
+    playAudioRandomWord();
+  };
+
+  // 播放随机音频
+
+  // 检查是否完成
+  useEffect(() => {
+    if (flippedStates.every(Boolean)) {
+      setIsCompleted(true);
+    } else {
+      playAudioRandomWord();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flippedStates]);
+
+  // 卡片翻转逻辑
+  const handleCardFlip = (index: number) => {
+    if (!isStarted) return; // 未开始游戏不能操作
+
+    const selectedWord = words[index];
+
+    if (selectedWord === currentWord) {
+      // 如果卡片正确
+      setFlippedStates((prevStates) =>
+        prevStates.map((isFlipped, i) => (i === index ? true : isFlipped))
+      );
+    } else {
+      // 如果卡片错误
+      triggerShake(index);
     }
   };
 
-  function getRandomFalseIndexFromStates(states: boolean[]): number | null {
-    const falseIndices = states
-      .map((flipped, index) => (flipped === false ? index : -1)) // 保留 false 的索引，其他设为 -1
-      .filter((index) => index !== -1); // 过滤掉 -1，保留有效索引
+  // 卡片抖动逻辑
+  const triggerShake = (index: number) => {
+    setShakeIndices((prev) => [...prev, index]);
+    setTimeout(() => {
+      setShakeIndices([]);
+    }, 1000);
+  };
 
-    console.log(falseIndices);
+  // 动画完成的回调函数
+  const handleAnimationComplete = () => {};
 
-    if (falseIndices.length === 0) return null; // 如果没有 false 的索引，返回 null
+  function playAudioRandomWord() {
+    const availableWords = words.filter((_, index) => !flippedStates[index]);
 
-    const randomIndex = Math.floor(Math.random() * falseIndices.length); // 随机获取一个索引
-    return falseIndices[randomIndex]; // 返回随机索引对应的值
-  }
-
-  useEffect(() => {
-    if (playerReady) return;
-    if (player.current) {
-      setPlayerReady(true);
-    }
-  }, [player, playerReady]);
-
-  const handleCardFlip = (index: number) => {
-    // 语音播放结束后才能翻转
-    if (player.status !== "finished" && player.status !== "stopped") return;
-    //如果当前卡片不是当前正在翻转的卡片则不执行翻转
-    if (currentIndex !== index) {
-      triggerShake(index);
+    if (availableWords.length === 0) {
+      setIsCompleted(true);
       return;
     }
 
-    setFlippedStates((prevStates) =>
-      // 如果卡片已经翻转，则不执行翻转
-      prevStates.map((isFlipped, i) =>
-        i === index && !isFlipped ? !isFlipped : isFlipped
-      )
-    );
-  };
+    const randomIndex = Math.floor(Math.random() * availableWords.length);
+    const randomWord = availableWords[randomIndex];
+    setCurrentWord(randomWord);
 
-  const triggerShake = (index: number) => {
-    setShakeIndices((prev) => [...prev, index]); // 添加需要抖动的卡片索引
+    if (player.current && player.status !== "playing") {
+      player.play(randomWord.duyin);
+    }
+  }
 
-    // 1秒后移除抖动状态
-    setTimeout(() => {
-      setShakeIndices((prev) => prev.filter((i) => i !== index)); // 移除抖动状态
-    }, 1000); // 动画持续时间
-  };
-
+  // 跳转到下一步
   function navigateToNext() {
     Taro.navigateTo({ url: "/pages/hanzi/nian" });
   }
-
-  useEffect(() => {
-    if (!playerReady) return;
-    console.log(flippedStates);
-    setTimeout(() => {
-      const randomIndex = getRandomFalseIndexFromStates(flippedStates);
-      console.log(randomIndex);
-      setCurrentIndex(randomIndex);
-      if (randomIndex !== null) {
-        playAudioAtIndex(randomIndex);
-      } else {
-        setIsCompleted(true);
-      }
-    }, 1000);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [flippedStates, playerReady]);
-
-  useEffect(() => {
-    console.log(player.status);
-    if (player.status === "loading" || player.status === "playing") {
-      // setPlaying(true);
-      Taro.showToast({ title: "播放中", mask: true });
-    }
-  }, [player.status, playing]);
 
   return (
     <View className="scroll-area">
@@ -109,18 +94,23 @@ export default function HanZiRenPage() {
         <View className="text-3xl font-bold">认一认</View>
 
         <Section>
-          <View className="flex flex-wrap w-full justify-center gap-2">
-            {words.map((word, _index) => (
+          <View className="flex flex-wrap w-full justify-center gap-4">
+            {words.map((word, index) => (
               <CardFlip
-                key="_index"
+                key={index}
                 frontText={word.hanzi}
-                isFlipped={flippedStates[_index]}
-                onFlip={() => handleCardFlip(_index)}
-                shouldShake={shakeIndices.includes(_index)}
+                isFlipped={flippedStates[index]}
+                onFlip={() => handleCardFlip(index)}
+                shouldShake={shakeIndices.includes(index)}
+                onAnimationComplete={handleAnimationComplete}
               />
             ))}
           </View>
         </Section>
+
+        <XButton onClick={startGame} className="btn-primary">
+          {isStarted ? "重新开始" : "开始"}
+        </XButton>
 
         <XButton
           onClick={navigateToNext}
@@ -129,6 +119,10 @@ export default function HanZiRenPage() {
         >
           下一步
         </XButton>
+
+        {player.status === "playing" && (
+          <View className="absolute inset-0 bg-black opacity-50 z-10" /> // 播放语音时的遮罩
+        )}
       </View>
     </View>
   );
